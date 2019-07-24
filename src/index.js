@@ -7,12 +7,12 @@ const DEFAULT_OPTIONS = {
   timeoutFallbackMs: 5000,
 };
 
-const idleish = (fn, timeoutFallbackMs) => {
+const idleish = (callback, timeoutFallbackMs) => {
   if ("requestIdleCallback" in window) {
-    const handle = requestIdleCallback(fn);
+    const handle = requestIdleCallback(callback);
     return () => cancelIdleCallback(handle);
   } else {
-    const handle = setTimeout(fn, timeoutFallbackMs);
+    const handle = setTimeout(callback, timeoutFallbackMs);
     return () => clearTimeout(handle);
   }
 };
