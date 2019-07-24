@@ -35,7 +35,7 @@ const makeIdleGetter = (workFn, options) => {
   };
 };
 
-const useIdleUntilUrgent = (func, CUSTOM_OPTIONS = {}) => {
+const useIdleUntilUrgent = (loadContent, CUSTOM_OPTIONS = {}) => {
   const options = useMemo(
     () => ({ ...DEFAULT_OPTIONS, ...CUSTOM_OPTIONS }),
     [CUSTOM_OPTIONS],
@@ -49,7 +49,7 @@ const useIdleUntilUrgent = (func, CUSTOM_OPTIONS = {}) => {
   const [result, setResult] = useState();
 
   const workFn = async () => {
-    const payload = await func();
+    const payload = await loadContent();
     setResult({ payload });
   };
 
