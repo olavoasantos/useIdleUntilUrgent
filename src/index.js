@@ -17,17 +17,17 @@ const idleish = (callback, timeoutFallbackMs) => {
   }
 };
 
-const makeIdleGetter = (workFn, timeoutFallbackMs) => {
+const makeIdleGetter = (getIdleContent, timeoutFallbackMs) => {
   const UNLOADED = {};
   let result = UNLOADED;
 
   const clear = idleish(() => {
-    result = workFn();
+    result = getIdleContent();
   }, timeoutFallbackMs);
 
   return () => {
     if (result === UNLOADED) {
-      result = workFn();
+      result = getIdleContent();
       clear();
     }
 
@@ -46,13 +46,13 @@ const useIdleUntilUrgent = (loadContent, CUSTOM_OPTIONS = {}) => {
   });
   const [result, setResult] = useState();
 
-  const workFn = async () => {
+  const getIdleContent = async () => {
     const payload = await loadContent();
     setResult({ payload });
   };
 
   useEffect(() => {
-    setIdleGetter({ idleGetter: makeIdleGetter(workFn, timeoutFallbackMs) });
+    setIdleGetter({ idleGetter: makeIdleGetter(getIdleContent, timeoutFallbackMs) });
   }, []);
 
   if (getNow && !result) {
