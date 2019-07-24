@@ -3,7 +3,6 @@ import { useState, useEffect, useMemo } from "react";
 const DEFAULT_OPTIONS = {
   getNow: false,
   fallback: null,
-  onLoad: () => {},
   timeoutFallbackMs: 5000,
 };
 
