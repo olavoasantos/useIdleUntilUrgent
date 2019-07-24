@@ -41,7 +41,7 @@ const useIdleUntilUrgent = (loadContent, CUSTOM_OPTIONS = {}) => {
   );
 
   const [{ idleGetter }, setIdleGetter] = useState({
-    idleGetter: () => ({})
+    idleGetter: () => ({}),
   });
   const [result, setResult] = useState();
 
@@ -51,7 +51,9 @@ const useIdleUntilUrgent = (loadContent, CUSTOM_OPTIONS = {}) => {
   };
 
   useEffect(() => {
-    setIdleGetter({ idleGetter: makeIdleGetter(getIdleContent, { timeoutFallbackMs }) });
+    setIdleGetter({
+      idleGetter: makeIdleGetter(getIdleContent, { timeoutFallbackMs }),
+    });
   }, []);
 
   if (getNow && !result) {
