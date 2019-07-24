@@ -1,4 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+
+const DEFAULT_OPTIONS = {
+  getNow: false,
+  fallback: null,
+  onLoad: () => {},
+  timeoutFallbackMs: 5000,
+};
 
 const idleish = (fn, { timeoutFallbackMs }) => {
   if ("requestIdleCallback" in window) {
@@ -28,13 +35,13 @@ const makeIdleGetter = (workFn, options) => {
   };
 };
 
-const useIdleUntilUrgent = (func, options) => {
-  let { fallback, getNow, timeoutFallbackMs } = options;
-  fallback = typeof fallback !== "undefined" ? fallback : null;
-  getNow = typeof getNow !== "undefined" ? getNow : false;
-  timeoutFallbackMs =
-    typeof timeoutFallbackMs !== "undefined" ? timeoutFallbackMs : 5000;
-  options = { fallback, getNow, timeoutFallbackMs };
+const useIdleUntilUrgent = (func, CUSTOM_OPTIONS = {}) => {
+  const options = useMemo(
+    () => ({ ...DEFAULT_OPTIONS, ...CUSTOM_OPTIONS }),
+    [CUSTOM_OPTIONS],
+  );
+
+  const { getNow, fallback } = options;
 
   const [{ idleGetter }, setIdleGetter] = useState({
     idleGetter: () => ({})
