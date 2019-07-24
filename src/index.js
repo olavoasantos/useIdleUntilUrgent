@@ -7,7 +7,7 @@ const DEFAULT_OPTIONS = {
   timeoutFallbackMs: 5000,
 };
 
-const idleish = (fn, { timeoutFallbackMs }) => {
+const idleish = (fn, timeoutFallbackMs) => {
   if ("requestIdleCallback" in window) {
     const handle = requestIdleCallback(fn);
     return () => cancelIdleCallback(handle);
@@ -17,13 +17,13 @@ const idleish = (fn, { timeoutFallbackMs }) => {
   }
 };
 
-const makeIdleGetter = (workFn, options) => {
+const makeIdleGetter = (workFn, timeoutFallbackMs) => {
   const UNLOADED = {};
   let result = UNLOADED;
 
   const clear = idleish(() => {
     result = workFn();
-  }, options);
+  }, timeoutFallbackMs);
 
   return () => {
     if (result === UNLOADED) {
@@ -36,12 +36,10 @@ const makeIdleGetter = (workFn, options) => {
 };
 
 const useIdleUntilUrgent = (loadContent, CUSTOM_OPTIONS = {}) => {
-  const options = useMemo(
+  const { getNow, fallback, timeoutFallbackMs } = useMemo(
     () => ({ ...DEFAULT_OPTIONS, ...CUSTOM_OPTIONS }),
     [CUSTOM_OPTIONS],
   );
-
-  const { getNow, fallback } = options;
 
   const [{ idleGetter }, setIdleGetter] = useState({
     idleGetter: () => ({})
@@ -54,7 +52,7 @@ const useIdleUntilUrgent = (loadContent, CUSTOM_OPTIONS = {}) => {
   };
 
   useEffect(() => {
-    setIdleGetter({ idleGetter: makeIdleGetter(workFn, options) });
+    setIdleGetter({ idleGetter: makeIdleGetter(workFn, timeoutFallbackMs) });
   }, []);
 
   if (getNow && !result) {
