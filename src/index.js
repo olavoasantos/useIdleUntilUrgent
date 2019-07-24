@@ -49,8 +49,8 @@ const useIdleUntilUrgent = (func, CUSTOM_OPTIONS = {}) => {
   const [result, setResult] = useState();
 
   const workFn = async () => {
-    const result = await func();
-    setResult({ payload: result });
+    const payload = await func();
+    setResult({ payload });
   };
 
   useEffect(() => {
